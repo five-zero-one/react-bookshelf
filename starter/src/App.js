@@ -4,6 +4,51 @@ import { search } from "./api/books.js";
 
 const { log: $ } = console;
 
+const useBook = ({ book }) => {
+    const [shelf, setShelf] = useState("none");
+
+    useEffect(() => {
+        (async () => {
+            $(`update the shelf of ${book.title} to ${shelf}`);
+
+        })();
+    }, [shelf, book]);
+
+    return {
+        shelf,
+        onUpdateShelf: (e) => setShelf(e.target.value ?? "none")
+    };
+};
+
+function Book({ book }) {
+    const { shelf, onUpdateShelf } = useBook({ book });
+    return (
+        <div className="book">
+            <div className="book-top">
+                <div
+                    className="book-cover"
+                    style={{ width: 128, height: 188, backgroundImage: `url("${book.imageLinks?.thumbnail}")` }}
+                ></div>
+                <div className="book-shelf-changer">
+                    <select value={shelf} onChange={onUpdateShelf}>
+                        <option value="none" disabled>
+                            Move to...
+                        </option>
+                        <option value="currentlyReading">
+                            Currently Reading
+                        </option>
+                        <option value="wantToRead">Want to Read</option>
+                        <option value="read">Read</option>
+                        <option value="none">None</option>
+                    </select>
+                </div>
+            </div>
+            <div className="book-title">{book.title}</div>
+            <div className="book-authors">{book.authors}</div>
+        </div>
+    );
+}
+
 const useApp = () => {
     const [route, setRoute] = useState(true);
 
@@ -27,7 +72,7 @@ const useApp = () => {
         onRoute: () => setRoute(!route),
         query,
         onQuery: (e) => setQuery(e.target.value ?? ""),
-        searchedBooks
+        searchedBooks,
     };
 };
 
@@ -56,7 +101,7 @@ function App() {
                     <div className="search-books-results">
                         <ol className="books-grid">
                             {searchedBooks.map((book => (<li key={book.id}>
-                                <p>{book.title}</p>
+                                <Book {...{ book }} />
                             </li>)))}
                         </ol>
                     </div>
