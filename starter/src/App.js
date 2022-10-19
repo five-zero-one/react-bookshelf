@@ -1,18 +1,22 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import { search } from "./api/books.js";
+import { get, search, update } from "./api/books.js";
 
-const { log: $ } = console;
+const { log: $, table: t } = console;
 
-const useBook = ({ book }) => {
-    const [shelf, setShelf] = useState("none");
+const useBook = ({ book, __foobar__ }) => {
+    const [shelf, setShelf] = useState(book.shelf ?? (book.shelf = "none"));
 
     useEffect(() => {
         (async () => {
-            $(`update the shelf of ${book.title} to ${shelf}`);
-
+            $(`before :: book.shelf = ${book.shelf}; shelf = ${shelf}`);
+            if (book.shelf && book.shelf !== shelf) {
+                __foobar__({ book, shelf });
+                book.shelf = shelf;
+            }
+            $(`after :: book.shelf = ${book.shelf}; shelf = ${shelf}`);
         })();
-    }, [shelf, book]);
+    }, [shelf, book, __foobar__]);
 
     return {
         shelf,
@@ -20,8 +24,8 @@ const useBook = ({ book }) => {
     };
 };
 
-function Book({ book }) {
-    const { shelf, onUpdateShelf } = useBook({ book });
+function Book({ book, __foobar__ }) {
+    const { shelf, onUpdateShelf } = useBook({ book, __foobar__ });
     return (
         <div className="book">
             <div className="book-top">
@@ -67,17 +71,28 @@ const useApp = () => {
         })();
     }, [query]);
 
+    /**
+     * Function name `__foobar__` is just a placeholder, subject to change
+     * @param {{book: any, shelf:string}} param0 
+     */
+    const __foobar__ = async ({ book, shelf }) => {
+        const { currentlyReading, wantToRead, read } = await update(book, shelf);
+        const books = await Promise.all([...currentlyReading, ...wantToRead, ...read].map(get));
+        t(books);
+    };
+
     return {
         route,
         onRoute: () => setRoute(!route),
         query,
         onQuery: (e) => setQuery(e.target.value ?? ""),
         searchedBooks,
+        __foobar__,
     };
 };
 
 function App() {
-    const { route, onRoute, onQuery, searchedBooks } = useApp();
+    const { route, onRoute, onQuery, searchedBooks, __foobar__ } = useApp();
 
     return (
         <div className="app">
@@ -101,7 +116,7 @@ function App() {
                     <div className="search-books-results">
                         <ol className="books-grid">
                             {searchedBooks.map((book => (<li key={book.id}>
-                                <Book {...{ book }} />
+                                <Book {...{ book, __foobar__ }} />
                             </li>)))}
                         </ol>
                     </div>
