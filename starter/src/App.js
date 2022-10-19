@@ -1,29 +1,64 @@
 import "./App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { search } from "./api/books.js";
+
+const { log: $ } = console;
+
+const useApp = () => {
+    const [route, setRoute] = useState(true);
+
+    useEffect(() => {
+        $("app component called");
+    }, []);
+
+    const [query, setQuery] = useState("");
+    const [searchedBooks, setSearchedBooks] = useState([]);
+
+    useEffect(() => {
+        (async () => {
+            const books = (await search(query, 20) ?? []);
+            // TODO add results from `getAll`
+            setSearchedBooks(books.error ? [] : books);
+        })();
+    }, [query]);
+
+    return {
+        route,
+        onRoute: () => setRoute(!route),
+        query,
+        onQuery: (e) => setQuery(e.target.value ?? ""),
+        searchedBooks
+    };
+};
 
 function App() {
-    const [showSearchPage, setShowSearchpage] = useState(false);
+    const { route, onRoute, onQuery, searchedBooks } = useApp();
 
     return (
         <div className="app">
-            {showSearchPage ? (
+            {route ? (
                 <div className="search-books">
                     <div className="search-books-bar">
-                        <a
+                        <button
                             className="close-search"
-                            onClick={() => setShowSearchpage(!showSearchPage)}
+                            onClick={onRoute}
                         >
                             Close
-                        </a>
+                        </button>
                         <div className="search-books-input-wrapper">
                             <input
+                                onChange={onQuery}
                                 type="text"
                                 placeholder="Search by title, author, or ISBN"
                             />
                         </div>
                     </div>
                     <div className="search-books-results">
-                        <ol className="books-grid"></ol>
+                        <ol className="books-grid">
+                            {searchedBooks.map((book => (<li key={book.id}>
+                                <p>{book.title}</p>
+                            </li>)))}
+                        </ol>
                     </div>
                 </div>
             ) : (
@@ -273,7 +308,7 @@ function App() {
                         </div>
                     </div>
                     <div className="open-search">
-                        <a onClick={() => setShowSearchpage(!showSearchPage)}>Add a book</a>
+                        <button onClick={onRoute}>Add a book</button>
                     </div>
                 </div>
             )}

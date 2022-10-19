@@ -1,5 +1,8 @@
 {
     "workspaces": [
         "starter"
-    ]
+    ],
+    "scripts": {
+        "start": "npm run start -w=bookshelf"
+    }
 }
