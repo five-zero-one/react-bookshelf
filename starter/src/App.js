@@ -5,7 +5,7 @@ import BookPage from "./view/BookPage";
 import SearchPage from "./view/SearchPage";
 
 const useApp = () => {
-    const [route, setRoute] = useState(true);
+    const [route, setRoute] = useState(false);
     const [bookShelves, setBookShelves] = useState({ currentlyReading: [], wantToRead: [], read: [] });
 
 
