@@ -8,4 +8,14 @@ There are two views, the book shelf which lists all the users current collection
 
 The api was provided by Udacity and deals with common CRUD operations.
 
+## Installation
+
+To install you need to install `npm` on your device. Once installed please update the dependencies and run using the following commands:
+
+```bash
+npm install
+npm run start
+```
+
+This will run the application in the browser of port 3000.
 

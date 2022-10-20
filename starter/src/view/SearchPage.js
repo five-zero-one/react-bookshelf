@@ -13,18 +13,14 @@ const useSearchPage = ({ bookShelves }) => {
                 return;
             };
 
-            const [searched] = await Promise.all([search(query, 20)]);
+            let [searched] = await Promise.all([search(query, 20)]);
             if (searched.error) return setSearchedBooks([]);
 
-            // TODO add results from `getAll`
-            for (const book of Object.values(bookShelves).flat()) {
-                const found = searched.findIndex(({ id }) => id === book.id);
-                if (found > 0) {
-                    searched[found].shelf = book.shelf;
-                }
-            };
+            const complete = searched.map(book => {
+                return (Object.values(bookShelves).flat().find(({ id }) => id === book.id)) ?? book;
+            });
 
-            setSearchedBooks(searched);
+            setSearchedBooks(complete);
         })();
     }, [query, bookShelves]);
 
@@ -37,7 +33,7 @@ const useSearchPage = ({ bookShelves }) => {
 };
 
 export default function SearchPage({ onRoute, bookShelves, onMoveBook }) {
-    const { searchedBooks, onQuery, resetQuery } = useSearchPage({ bookShelves });
+    const { searchedBooks, onQuery, resetQuery } = useSearchPage({ bookShelves, onMoveBook });
 
     return (
         <div className="search-books">

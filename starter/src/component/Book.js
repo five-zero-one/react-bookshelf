@@ -14,6 +14,8 @@ const useBook = ({ book, onMoveBook }) => {
                 onMoveBook({ book, shelf: (book.shelf = shelf) });
             }
             // $(`after :: book.shelf = ${book.shelf}; shelf = ${shelf}`);
+
+            console.log(shelf);
         })();
     }, [shelf, book, onMoveBook]);
 
