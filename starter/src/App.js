@@ -72,16 +72,22 @@ const useApp = () => {
 
     useEffect(() => {
         (async () => {
-            if (query === "") return setSearchedBooks([]);
+            if (query === "") {
+                $("reset searched");
+                setSearchedBooks([]);
+                return;
+            };
 
             const [searched] = await Promise.all([search(query, 20)]);
             if (searched.error) return setSearchedBooks([]);
 
             // TODO add results from `getAll`
+            $(Object.values(bookShelves).flat());
             for (const book of Object.values(bookShelves).flat()) {
                 const found = searched.findIndex(({ id }) => id === book.id);
                 if (found > 0) {
-                    searched[found] = book;
+                    $(found, book);
+                    searched[found].shelf = book.shelf;
                 }
             };
 
@@ -92,7 +98,6 @@ const useApp = () => {
 
     useEffect(() => {
         (async () => {
-            // TODO repeating myself
             const temp = { currentlyReading: [], wantToRead: [], read: [] };
             const books = await getAll();
             for (const book of books) {
@@ -112,7 +117,6 @@ const useApp = () => {
      */
     const __foobar__ = async ({ book, shelf }) => {
         const { currentlyReading, wantToRead, read } = await update(book, shelf);
-        // TODO repeating myself
         /* NOTE this is much slower than my old implementation but seems to work anyway */
         const books = await Promise.all([...currentlyReading, ...wantToRead, ...read].map(get));
         const temp = { currentlyReading: [], wantToRead: [], read: [] };
@@ -130,7 +134,8 @@ const useApp = () => {
         route,
         onRoute: () => setRoute(!route),
         query,
-        onQuery: (e) => setQuery(e.target.value ?? ""),
+        onQuery: (e) => setQuery(e.target.value ?? "") && (e.target.value = ""),
+        resetQuery: () => setQuery(""), // NOTE this is for a bug that I can't seem to fix
         searchedBooks,
         shelvedBooks: bookShelves,
         __foobar__,
@@ -138,7 +143,7 @@ const useApp = () => {
 };
 
 function App() {
-    const { route, onRoute, onQuery, searchedBooks, shelvedBooks, __foobar__ } = useApp();
+    const { route, onRoute, onQuery, resetQuery, searchedBooks, shelvedBooks, __foobar__ } = useApp();
 
     return (
         <div className="app">
@@ -147,7 +152,7 @@ function App() {
                     <div className="search-books-bar">
                         <button
                             className="close-search"
-                            onClick={onRoute}
+                            onClick={() => { resetQuery(); onRoute(); }}
                         >
                             Close
                         </button>
@@ -207,14 +212,6 @@ function App() {
             )}
         </div>
     );
-}
-
-function SearchPage({ }) {
-    return ();
-}
-
-function BookPage({ }) {
-    return ();
 }
 
 export default App;
