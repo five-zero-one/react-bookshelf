@@ -36,7 +36,7 @@ export default function Book({ book, onMoveBook }) {
                 ></div>
                 <div className="book-shelf-changer">
                     <select value={shelf} onChange={onUpdateShelf}>
-                        <option value="none" disabled>
+                        <option disabled>
                             Move to...
                         </option>
                         <option value="currentlyReading">

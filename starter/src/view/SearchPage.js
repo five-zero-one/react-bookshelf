@@ -17,7 +17,7 @@ const useSearchPage = ({ bookShelves }) => {
             if (searched.error) return setSearchedBooks([]);
 
             const complete = searched.map(book => {
-                return (Object.values(bookShelves).flat().find(({ id }) => id === book.id)) ?? book;
+                return (Object.values(bookShelves).flat().find(({ id }) => id === book.id)) ?? { ...book, shelf: "none" };
             });
 
             setSearchedBooks(complete);
