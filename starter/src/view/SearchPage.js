@@ -9,6 +9,7 @@ const useSearchPage = ({ books }) => {
     useEffect(() => {
         (async () => {
             const result = await search(query, 10);
+
             if (result && !result.error)
                 setSearchedBooks(result.map(book =>
                     books.find(({ id }) => id === book.id) ?? { ...book, shelf: "none" }));
@@ -20,20 +21,19 @@ const useSearchPage = ({ books }) => {
     return {
         searchedBooks,
         query,
-        onQuery: (e) => setQuery(e.target.value ?? "") && (e.target.value = ""),
-        resetQuery: () => setQuery(""), // NOTE this is for a bug that I can't seem to fix
+        onQuery: (e) => setQuery(e.target.value),
     };
 };
 
 export default function SearchPage({ onRoute, books, onMoveBook }) {
-    const { searchedBooks, onQuery, resetQuery } = useSearchPage({ books, onMoveBook });
+    const { searchedBooks, onQuery } = useSearchPage({ books, onMoveBook });
 
     return (
         <div className="search-books">
             <div className="search-books-bar">
                 <button
                     className="close-search"
-                    onClick={() => { resetQuery(); onRoute(); }}
+                    onClick={() => { onRoute(); /*resetQuery();*/ }}
                 >
                     Close
                 </button>

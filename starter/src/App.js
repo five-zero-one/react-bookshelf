@@ -19,8 +19,10 @@ const useApp = () => {
      * @param {{book: any, shelf:string}} param0 
      */
     const onMoveBook = async ({ book, shelf }) => {
-        const updated = await get((await update(book, shelf))[shelf].find(id => id === book.id));
-        setBooks(books.filter(({ id }) => id !== updated.id).concat(updated));
+        if ((await update(book, shelf))[shelf]?.includes(book.id))
+            setBooks(books.filter(({ id }) => id !== book.id).concat((await get(book.id))));
+        else
+            setBooks(books.filter(({ id }) => id !== book.id));
     };
 
     return {
