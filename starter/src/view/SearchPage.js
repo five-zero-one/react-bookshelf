@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { search } from "../api/books";
 import Book from "../component/Book";
 
-const useSearchPage = ({ bookShelves }) => {
+const useSearchPage = ({ books }) => {
     const [query, setQuery] = useState("");
     const [searchedBooks, setSearchedBooks] = useState([]);
 
@@ -13,16 +13,16 @@ const useSearchPage = ({ bookShelves }) => {
                 return;
             };
 
-            let [searched] = await Promise.all([search(query, 20)]);
-            if (searched.error) return setSearchedBooks([]);
+            let searched = await search(query, 20);
+            if (searched.error) {
+                setSearchedBooks([]);
+                return;
+            };
 
-            const complete = searched.map(book => {
-                return (Object.values(bookShelves).flat().find(({ id }) => id === book.id)) ?? { ...book, shelf: "none" };
-            });
-
-            setSearchedBooks(complete);
+            setSearchedBooks(searched.map(book =>
+                books.find(({ id }) => id === book.id) ?? { ...book, shelf: "none" }));
         })();
-    }, [query, bookShelves]);
+    }, [query, books]);
 
     return {
         searchedBooks,
@@ -32,8 +32,8 @@ const useSearchPage = ({ bookShelves }) => {
     };
 };
 
-export default function SearchPage({ onRoute, bookShelves, onMoveBook }) {
-    const { searchedBooks, onQuery, resetQuery } = useSearchPage({ bookShelves, onMoveBook });
+export default function SearchPage({ onRoute, books, onMoveBook }) {
+    const { searchedBooks, onQuery, resetQuery } = useSearchPage({ books, onMoveBook });
 
     return (
         <div className="search-books">

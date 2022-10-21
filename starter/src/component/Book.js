@@ -3,19 +3,15 @@ import { useEffect, useState } from "react";
 const useBook = ({ book, onMoveBook }) => {
     /* NOTE coercing the value of book to `none` if it is undefined.
     There may be a better away to deal with this but for now this is ok */
-    const [shelf, setShelf] = useState(book.shelf ?? (book.shelf = "none"));
+    const [shelf, setShelf] = useState(book.shelf);
 
     useEffect(() => {
         (async () => {
             /* NOTE I shouldn't need to check if the value is undefined
             as that is being resolved in the useState function */
-            // $(`before :: book.shelf = ${book.shelf}; shelf = ${shelf}`);
             if (book.shelf !== shelf) {
                 onMoveBook({ book, shelf: (book.shelf = shelf) });
             }
-            // $(`after :: book.shelf = ${book.shelf}; shelf = ${shelf}`);
-
-            console.log(shelf);
         })();
     }, [shelf, book, onMoveBook]);
 
