@@ -1,20 +1,4 @@
-import { useEffect, useState } from "react";
-
-const useBook = ({ book, onMoveBook }) => {
-    const [shelf, setShelf] = useState(book.shelf);
-
-    useEffect(() => {
-        (async () => {
-            book.shelf !== shelf &&
-                onMoveBook({ book, shelf });
-        })();
-    }, [shelf, book, onMoveBook]);
-
-    return {
-        shelf,
-        onUpdateShelf: (e) => setShelf(e.target.value ?? "none")
-    };
-};
+import { useBook } from "../hook";
 
 export default function Book({ book, onMoveBook }) {
     const { shelf, onUpdateShelf } = useBook({ book, onMoveBook });

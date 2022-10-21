@@ -1,42 +1,15 @@
-import { useEffect, useState } from "react";
-import { search } from "../api/books";
-import Book from "../component/Book";
+import { Link } from "react-router-dom";
+import BookList from "../component/BookList";
+import { useSearch } from "../hook";
 
-const useSearchPage = ({ books }) => {
-    const [query, setQuery] = useState("");
-    const [searchedBooks, setSearchedBooks] = useState([]);
-
-    useEffect(() => {
-        (async () => {
-            const result = await search(query, 10);
-
-            if (result && !result.error)
-                setSearchedBooks(result.map(book =>
-                    books.find(({ id }) => id === book.id) ?? { ...book, shelf: "none" }));
-            else
-                setSearchedBooks([]);
-        })();
-    }, [query, books]);
-
-    return {
-        searchedBooks,
-        query,
-        onQuery: (e) => setQuery(e.target.value),
-    };
-};
 
 export default function SearchPage({ onRoute, books, onMoveBook }) {
-    const { searchedBooks, onQuery } = useSearchPage({ books, onMoveBook });
+    const { searchedBooks, onQuery } = useSearch({ books, onMoveBook });
 
     return (
         <div className="search-books">
             <div className="search-books-bar">
-                <button
-                    className="close-search"
-                    onClick={() => { onRoute(); /*resetQuery();*/ }}
-                >
-                    Close
-                </button>
+                <Link to="/" className="close-search">Close</Link>
                 <div className="search-books-input-wrapper">
                     <input
                         onChange={onQuery}
@@ -46,11 +19,7 @@ export default function SearchPage({ onRoute, books, onMoveBook }) {
                 </div>
             </div>
             <div className="search-books-results">
-                <ol className="books-grid">
-                    {searchedBooks.map((book => (<li key={book.id}>
-                        <Book  {...{ book, onMoveBook }} />
-                    </li>)))}
-                </ol>
+                <BookList list={searchedBooks} onMoveBook={onMoveBook} />
             </div>
         </div>
     );

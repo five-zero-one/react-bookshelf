@@ -4,5 +4,8 @@
     ],
     "scripts": {
         "start": "npm run start -w=bookshelf"
+    },
+    "dependencies": {
+        "react-router-dom": "^6.4.2"
     }
 }
