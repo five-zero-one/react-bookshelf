@@ -8,7 +8,6 @@ const useApp = () => {
     const [route, setRoute] = useState(false);
     const [bookShelves, setBookShelves] = useState({ currentlyReading: [], wantToRead: [], read: [] });
 
-
     useEffect(() => {
         (async () => {
             const temp = { currentlyReading: [], wantToRead: [], read: [] };
