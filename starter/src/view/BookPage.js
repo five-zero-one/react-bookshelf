@@ -1,6 +1,8 @@
 import Book from "../component/Book";
 
 export default function BookPage({ onRoute, books, onMoveBook }) {
+    const categories = { currentlyReading: [], wantToRead: [], read: [] };
+    for (const book of books) categories[book.shelf].push(book);
 
     return (
         <div className="list-books">
@@ -12,7 +14,7 @@ export default function BookPage({ onRoute, books, onMoveBook }) {
                     <div className="bookshelf">
                         <h2 className="bookshelf-title">Currently Reading</h2>
                         <div className="bookshelf-books">
-                            <ol className="books-grid">{books.filter(({ shelf }) => shelf === "currentlyReading").map((book => (<li key={book.id}>
+                            <ol className="books-grid">{categories.currentlyReading.map((book => (<li key={book.id}>
                                 <Book {...{ book, onMoveBook }} />
                             </li>)))}</ol>
                         </div>
@@ -20,7 +22,7 @@ export default function BookPage({ onRoute, books, onMoveBook }) {
                     <div className="bookshelf">
                         <h2 className="bookshelf-title">Want to Read</h2>
                         <div className="bookshelf-books">
-                            <ol className="books-grid">{books.filter(({ shelf }) => shelf === "wantToRead").map((book => (<li key={book.id}>
+                            <ol className="books-grid">{categories.wantToRead.map((book => (<li key={book.id}>
                                 <Book  {...{ book, onMoveBook }} />
                             </li>)))}</ol>
                         </div>
@@ -28,7 +30,7 @@ export default function BookPage({ onRoute, books, onMoveBook }) {
                     <div className="bookshelf">
                         <h2 className="bookshelf-title">Read</h2>
                         <div className="bookshelf-books">
-                            <ol className="books-grid">{books.filter(({ shelf }) => shelf === "read").map((book => (<li key={book.id}>
+                            <ol className="books-grid">{categories.read.map((book => (<li key={book.id}>
                                 <Book {...{ book, onMoveBook }} />
                             </li>)))}</ol>
                         </div>

@@ -8,19 +8,12 @@ const useSearchPage = ({ books }) => {
 
     useEffect(() => {
         (async () => {
-            if (query === "") {
+            const result = await search(query, 10);
+            if (result && !result.error)
+                setSearchedBooks(result.map(book =>
+                    books.find(({ id }) => id === book.id) ?? { ...book, shelf: "none" }));
+            else
                 setSearchedBooks([]);
-                return;
-            };
-
-            let searched = await search(query, 20);
-            if (searched.error) {
-                setSearchedBooks([]);
-                return;
-            };
-
-            setSearchedBooks(searched.map(book =>
-                books.find(({ id }) => id === book.id) ?? { ...book, shelf: "none" }));
         })();
     }, [query, books]);
 
