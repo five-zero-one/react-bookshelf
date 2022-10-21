@@ -3,7 +3,7 @@ import BookList from "../component/BookList";
 import { useSearch } from "../hook";
 
 
-export default function SearchPage({ onRoute, books, onMoveBook }) {
+export default function SearchPage({ books, onMoveBook }) {
     const { searchedBooks, onQuery } = useSearch({ books, onMoveBook });
 
     return (

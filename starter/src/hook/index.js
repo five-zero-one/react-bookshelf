@@ -43,7 +43,6 @@ export const useSearch = ({ books }) => {
 
 
 export const useApp = () => {
-    const [route, setRoute] = useState(false);
     const [books, setBooks] = useState([]);
 
     useEffect(() => {
@@ -64,8 +63,6 @@ export const useApp = () => {
     };
 
     return {
-        route,
-        onRoute: () => setRoute(!route),
         books,
         onMoveBook,
     };

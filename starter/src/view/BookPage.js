@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import BookShelf from "../component/BookShelf";
 
-export default function BookPage({ onRoute, books, onMoveBook }) {
+export default function BookPage({ books, onMoveBook }) {
     const categories = { currentlyReading: [], wantToRead: [], read: [] };
     for (const book of books) categories[book.shelf].push(book);
 
